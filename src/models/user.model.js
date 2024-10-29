@@ -12,7 +12,7 @@ const UserSchema = new mongoose.Schema({
   },
   full_name: {
     type: String,
-    required: [true, "Please provide a name"],
+    // required: [true, "Please provide a name"],
   },
   gender: {
     type: Boolean,
