@@ -23,8 +23,8 @@ const getShowtimesService = async () => {
     try {
         return await Showtime.find()
             .populate('film_id')
+            // .populate('screen_id')
             .populate('branch_id');
-            // .populate('screen_id');
     } catch (error) {
         throw new Error(error.message);
     }

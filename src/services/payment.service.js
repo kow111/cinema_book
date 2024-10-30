@@ -22,7 +22,7 @@ const updatePaymentService = async (id, payment) => {
 const getPaymentsService = async () => {
     try {
         return await Payment.find()
-            // .populate('user_id')
+            .populate('user_id')
             .populate('show_time_id');
     } catch (error) {
         throw new Error(error.message);
