@@ -24,7 +24,19 @@ const getShowtimesService = async () => {
         return await Showtime.find()
             .populate('film_id')
             // .populate('screen_id')
-            .populate('branch_id');
+            .populate('branch_id')
+            .then((showtimes) => {
+                // populate screen
+                showtimes.forEach((showtime) => {
+                    showtime.set('screen', showtime.branch_id.list_screen.id(showtime.screen_id), { strict: false });
+                    // remove list_screen
+                    showtime.branch_id.list_screen = undefined;
+                    showtime.screen_id = undefined;
+                });
+
+                return showtimes;
+            });
+
     } catch (error) {
         throw new Error(error.message);
     }
