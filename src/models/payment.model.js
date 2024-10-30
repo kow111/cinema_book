@@ -1,29 +1,29 @@
 const mongoose = require("mongoose");
 
-const showtimeSchema = new mongoose.Schema({
-    film_id: {
+const paymentSchema = new mongoose.Schema({
+    user_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Film",
+        ref: "User",
         required: true,
-        trim: true,
     },
-    branch_id: {
+    show_time_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Branch",
-        required: true,
-        trim: true,
-    },
-    screen_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Branch.list_screen",
-        required: true,
-        trim: true,
-    },
-    start_time: {
-        type: Date,
+        ref: "Showtime",
         required: true,
     },
-    duration: {
+    list_seat: {
+        type: [String],
+        required: true,
+    },
+    total_price: {
+        type: Number,
+        required: true,
+    },
+    discount: {
+        type: Number,
+        required: true,
+    },
+    paid_amount: {
         type: Number,
         required: true,
     },
@@ -37,6 +37,6 @@ const showtimeSchema = new mongoose.Schema({
     },
 });
 
-const Showtime = mongoose.model("Showtime", showtimeSchema);
+const Payment = mongoose.model("Payment", paymentSchema);
 
-module.exports = Showtime;
+module.exports = Payment;

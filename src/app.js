@@ -4,6 +4,10 @@ const cors = require("cors");
 const testRouter = require("./routes/test.route");
 const branchRouter = require("./routes/branch.route");
 const categoryRouter = require("./routes/category.route");
+const showtimeRouter = require("./routes/showtime.route");
+const paymentRouter = require("./routes/payment.route");
+const discountRouter = require("./routes/discount.route");
+const filmRouter = require("./routes/film.route");
 
 const app = express();
 
@@ -14,5 +18,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1", testRouter);
 app.use("/api/v1/branch", branchRouter);
 app.use("/api/v1/category", categoryRouter);
+app.use("/api/v1/showtime", showtimeRouter);
+app.use("/api/v1/payment", paymentRouter);
+app.use("/api/v1/discount", discountRouter);
+app.use("/api/v1/film", filmRouter);
 
 module.exports = app;
