@@ -8,6 +8,7 @@ const showtimeRouter = require("./routes/showtime.route");
 const paymentRouter = require("./routes/payment.route");
 const discountRouter = require("./routes/discount.route");
 const filmRouter = require("./routes/film.route");
+const authRouter = require("./routes/auth.route");
 
 const app = express();
 
@@ -22,5 +23,6 @@ app.use("/api/v1/showtime", showtimeRouter);
 app.use("/api/v1/payment", paymentRouter);
 app.use("/api/v1/discount", discountRouter);
 app.use("/api/v1/film", filmRouter);
+app.use("/api/v1/auth", authRouter);
 
 module.exports = app;
