@@ -1,6 +1,7 @@
 const {
   createBranchService,
   getBranchesService,
+  updateBranchService,
 } = require("../services/branch.service");
 
 const getBranches = async (req, res) => {
