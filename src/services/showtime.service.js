@@ -34,7 +34,7 @@ const getShowtimesService = async () => {
             { strict: false }
           );
           // remove list_screen
-          showtime.branch_id.list_screen = undefined;
+          // showtime.branch_id.list_screen = undefined;
           showtime.screen_id = undefined;
         });
 
@@ -59,7 +59,7 @@ const getShowTimeByFilmIdService = async (film_id) => {
             { strict: false }
           );
           // remove list_screen
-          showtime.branch_id.list_screen = undefined;
+          // showtime.branch_id.list_screen = undefined;
           showtime.screen_id = undefined;
         });
 
