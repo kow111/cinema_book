@@ -17,6 +17,8 @@ const getPayments = async (req, res) => {
 
 const postCreatePayment = async (req, res) => {
   try {
+    const { userId } = req.user;
+    req.body.user_id = userId;
     const newPayment = await createPaymentService(req.body);
     res.status(201).json(newPayment);
   } catch (error) {
