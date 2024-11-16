@@ -27,6 +27,14 @@ const getFilmsService = async () => {
   }
 };
 
+const getFilmByIdService = async (id) => {
+  try {
+    return await Film.findById(id).populate("category_id");
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 const checkFilmExist = async (film_id) => {
   try {
     await Film.findById(film_id);
@@ -40,4 +48,5 @@ module.exports = {
   updateFilmService,
   getFilmsService,
   checkFilmExist,
+  getFilmByIdService,
 };

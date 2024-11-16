@@ -2,6 +2,7 @@ const {
   createFilmService,
   getFilmsService,
   updateFilmService,
+  getFilmByIdService,
 } = require("../services/film.service");
 const { uploadToFirebase } = require("../services/firebase.service");
 
@@ -60,4 +61,14 @@ const putUpdateFilm = async (req, res) => {
   }
 };
 
-module.exports = { getFilms, postCreateFilm, putUpdateFilm };
+const getFilmById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const film = await getFilmByIdService(id);
+    res.status(200).json(film);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+module.exports = { getFilms, postCreateFilm, putUpdateFilm, getFilmById };
