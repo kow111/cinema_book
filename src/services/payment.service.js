@@ -1,4 +1,5 @@
 const Payment = require("../models/payment.model");
+const { default: axios } = require("axios");
 
 const createPaymentService = async (payment) => {
   try {
@@ -36,9 +37,165 @@ const getPaymentByShowTimeIdService = async (show_time_id) => {
     throw new Error(error.message);
   }
 };
+
+const paymentWithMomoService = async (payment) => {
+  const {
+    show_time_id,
+    list_seat,
+    total_price,
+    discount,
+    paid_amount,
+    user_id,
+  } = payment;
+  //https://developers.momo.vn/#/docs/en/aiov2/?id=payment-method
+  //parameters
+  var accessKey = "F8BBA842ECF85";
+  var secretKey = "K951B6PE1waDMi640xX08PD3vg6EkVlz";
+  var orderInfo = "pay with MoMo";
+  var partnerCode = "MOMO";
+  var redirectUrl = "https://webhook.site/b3088a6a-2d17-4f8d-a383-71389a6c600b";
+  var ipnUrl =
+    "https://d192-14-241-237-114.ngrok-free.app/api/v1/payment/callback";
+  var requestType = "payWithMethod";
+  var amount = paid_amount * 1000;
+  var orderId = partnerCode + new Date().getTime();
+  var requestId = orderId;
+  var extraData = JSON.stringify({
+    show_time_id,
+    list_seat,
+    total_price,
+    discount,
+    paid_amount,
+    user_id,
+  });
+  var orderGroupId = "";
+  var autoCapture = true;
+  var lang = "vi";
+
+  //before sign HMAC SHA256 with format
+  //accessKey=$accessKey&amount=$amount&extraData=$extraData&ipnUrl=$ipnUrl&orderId=$orderId&orderInfo=$orderInfo&partnerCode=$partnerCode&redirectUrl=$redirectUrl&requestId=$requestId&requestType=$requestType
+  var rawSignature =
+    "accessKey=" +
+    accessKey +
+    "&amount=" +
+    amount +
+    "&extraData=" +
+    extraData +
+    "&ipnUrl=" +
+    ipnUrl +
+    "&orderId=" +
+    orderId +
+    "&orderInfo=" +
+    orderInfo +
+    "&partnerCode=" +
+    partnerCode +
+    "&redirectUrl=" +
+    redirectUrl +
+    "&requestId=" +
+    requestId +
+    "&requestType=" +
+    requestType;
+  //puts raw signature
+  console.log("--------------------RAW SIGNATURE----------------");
+  console.log(rawSignature);
+  //signature
+  const crypto = require("crypto");
+  var signature = crypto
+    .createHmac("sha256", secretKey)
+    .update(rawSignature)
+    .digest("hex");
+  console.log("--------------------SIGNATURE----------------");
+  console.log(signature);
+
+  //json object send to MoMo endpoint
+  const requestBody = JSON.stringify({
+    partnerCode: partnerCode,
+    partnerName: "Test",
+    storeId: "MomoTestStore",
+    requestId: requestId,
+    amount: amount,
+    orderId: orderId,
+    orderInfo: orderInfo,
+    redirectUrl: redirectUrl,
+    ipnUrl: ipnUrl,
+    lang: lang,
+    requestType: requestType,
+    autoCapture: autoCapture,
+    extraData: extraData,
+    orderGroupId: orderGroupId,
+    signature: signature,
+  });
+  const options = {
+    port: 443,
+    url: "https://test-payment.momo.vn/v2/gateway/api/create",
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Content-Length": Buffer.byteLength(requestBody),
+    },
+    data: requestBody,
+  };
+  let rs;
+  try {
+    rs = await axios(options);
+    return {
+      status: rs.status,
+      data: rs.data,
+    };
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+const callBackMoMoService = async (data) => {
+  try {
+    // // Xác thực chữ ký MoMo để đảm bảo callback hợp lệ
+    // const crypto = require("crypto");
+    // var accessKey = "F8BBA842ECF85";
+    // var secretKey = "K951B6PE1waDMi640xX08PD3vg6EkVlz";
+    // var partnerCode = "MOMO";
+    // const rawSignature = `accessKey=${accessKey}&orderId=${data.orderId}&partnerCode=${partnerCode}&requestId=${data.requestId}&amount=${data.amount}&orderInfo=${data.orderInfo}&orderType=${data.orderType}&transId=${data.transId}&message=${data.message}&localMessage=${data.localMessage}&responseTime=${data.responseTime}&errorCode=${data.errorCode}&payType=${data.payType}&extraData=${data.extraData}`;
+    // const signature = crypto
+    //   .createHmac("sha256", secretKey)
+    //   .update(rawSignature)
+    //   .digest("hex");
+
+    // if (signature !== data.signature) {
+    //   throw new Error("Invalid signature from MoMo");
+    // }
+
+    if (data.resultCode !== 0) {
+      console.log("Payment failed", data.message);
+      return { success: false, message: "Payment failed" };
+    }
+
+    const {
+      user_id,
+      show_time_id,
+      list_seat,
+      total_price,
+      discount,
+      paid_amount,
+    } = JSON.parse(data.extraData);
+    await createPaymentService({
+      user_id,
+      show_time_id,
+      list_seat,
+      total_price,
+      discount,
+      paid_amount,
+    });
+  } catch (error) {
+    console.error("Error in MoMo callback:", error.message);
+    return { success: false, message: error.message };
+  }
+};
+
 module.exports = {
   createPaymentService,
   updatePaymentService,
   getPaymentsService,
   getPaymentByShowTimeIdService,
+  paymentWithMomoService,
+  callBackMoMoService,
 };
