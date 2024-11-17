@@ -28,6 +28,10 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  role_id: {
+    type: Number,
+    default: 2,
+  },
 });
 
 const User = mongoose.model("User", UserSchema);

@@ -1,4 +1,8 @@
-const { signupService, loginService } = require("../services/auth.service");
+const {
+  signupService,
+  loginService,
+  updateUserService,
+} = require("../services/auth.service");
 const { validationResult } = require("express-validator");
 
 const postSignup = async (req, res) => {
@@ -9,10 +13,11 @@ const postSignup = async (req, res) => {
     });
   }
   try {
-    const { email, password } = req.body;
+    const { email, password, full_name } = req.body;
     const rs = await signupService({
       email,
       password,
+      full_name,
     });
     res.status(201).json(rs);
   } catch (err) {
@@ -37,7 +42,23 @@ const postLogin = async (req, res) => {
   }
 };
 
+const updateUser = async (req, res) => {
+  const { user_id } = req.params;
+  const updatedData = req.body;
+
+  try {
+    const updatedUser = await updateUserService(user_id, updatedData);
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json(updatedUser); // Trả về thông tin user sau khi cập nhật
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
 module.exports = {
   postSignup,
   postLogin,
+  updateUser,
 };

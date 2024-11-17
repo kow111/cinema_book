@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 
 const signupService = async (data) => {
   try {
-    const { email, password } = data;
+    const { email, password, full_name } = data;
     const user = await User.findOne({ email });
     if (user) {
       throw new Error("Email đã tồn tài");
@@ -18,6 +18,7 @@ const signupService = async (data) => {
     let rs = await User.create({
       email,
       password: hashedPassword,
+      full_name: full_name,
     });
     return rs;
   } catch (err) {
@@ -49,7 +50,21 @@ const loginService = async (data) => {
   }
 };
 
+const updateUserService = async (userId, updatedData) => {
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $set: updatedData },
+      { new: true }
+    );
+    return updatedUser;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 module.exports = {
   signupService,
   loginService,
+  updateUserService,
 };
