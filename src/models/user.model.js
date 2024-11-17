@@ -20,6 +20,9 @@ const UserSchema = new mongoose.Schema({
   phone: {
     type: String,
   },
+  otp: {
+    type: String,
+  },
   is_active: {
     type: Boolean,
     default: true,

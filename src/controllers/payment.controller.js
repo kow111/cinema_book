@@ -3,6 +3,8 @@ const {
   getPaymentsService,
   updatePaymentService,
   getPaymentByShowTimeIdService,
+  paymentWithMomoService,
+  callBackMoMoService,
 } = require("../services/payment.service");
 const { checkShowtimeExist } = require("../services/showtime.service");
 
@@ -47,9 +49,32 @@ const getPaymentByShowTimeId = async (req, res) => {
   }
 };
 
+const paymentWithMomo = async (req, res) => {
+  try {
+    req.body.user_id = req.user.userId;
+    const rs = await paymentWithMomoService(req.body);
+    res.status(200).json(rs);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+const callBackMoMo = async (req, res) => {
+  try {
+    await callBackMoMoService(req.body);
+    res.status(200).json({
+      message: "success",
+    });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getPayments,
   postCreatePayment,
   putUpdatePayment,
   getPaymentByShowTimeId,
+  paymentWithMomo,
+  callBackMoMo,
 };
