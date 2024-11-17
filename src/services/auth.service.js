@@ -1,6 +1,7 @@
 const User = require("../models/user.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { sendMail } = require("../util/email.transporter");
 
 const signupService = async (data) => {
   try {
@@ -49,7 +50,64 @@ const loginService = async (data) => {
   }
 };
 
+const sendOtpService = async (data) => {
+  try {
+    const { email } = data;
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new Error("Email chưa đăng ký");
+    }
+    const otp = Math.floor(100000 + Math.random() * 900000);
+    user.otp = otp;
+    await user.save();
+    await sendMail(email, "confirm your OTP", `OTP: ${otp}`);
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+const verifyOTPService = async (data) => {
+  try {
+    const { email, otp } = data;
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new Error("Không tìm thấy người dùng");
+    }
+    if (user.otp !== otp) {
+      throw new Error("OTP không đúng");
+    }
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+const resetPasswordService = async (data) => {
+  try {
+    const { email, otp, password } = data;
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      throw new Error("Email chưa đăng ký");
+    }
+    if (user.otp !== otp) {
+      throw new Error("OTP không đúng");
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    user.password = hashedPassword;
+
+    user.otp = null;
+    await user.save();
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
 module.exports = {
   signupService,
   loginService,
+  sendOtpService,
+  verifyOTPService,
+  resetPasswordService,
 };

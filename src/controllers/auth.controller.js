@@ -1,4 +1,10 @@
-const { signupService, loginService } = require("../services/auth.service");
+const {
+  signupService,
+  loginService,
+  sendOtpService,
+  verifyOTPService,
+  resetPasswordService,
+} = require("../services/auth.service");
 const { validationResult } = require("express-validator");
 
 const postSignup = async (req, res) => {
@@ -37,7 +43,61 @@ const postLogin = async (req, res) => {
   }
 };
 
+const postSendOtp = async (req, res) => {
+  try {
+    const { email } = req.body;
+    await sendOtpService({
+      email,
+    });
+    res.status(200).json({
+      message: "Send OTP successfully",
+    });
+  } catch (err) {
+    res.status(400).json({
+      message: err.message,
+    });
+  }
+};
+
+const postVerifyOtp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    await verifyOTPService({
+      email,
+      otp,
+    });
+    res.status(200).json({
+      message: "Verify OTP successfully",
+    });
+  } catch (err) {
+    res.status(400).json({
+      message: err.message,
+    });
+  }
+};
+
+const postResetPassword = async (req, res) => {
+  try {
+    const { email, otp, password } = req.body;
+    const rs = await resetPasswordService({
+      email,
+      otp,
+      password,
+    });
+    res.status(200).json({
+      message: "Reset password successfully",
+    });
+  } catch (err) {
+    res.status(400).json({
+      message: err.message,
+    });
+  }
+};
+
 module.exports = {
   postSignup,
   postLogin,
+  postSendOtp,
+  postVerifyOtp,
+  postResetPassword,
 };
