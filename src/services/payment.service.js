@@ -55,7 +55,7 @@ const paymentWithMomoService = async (payment) => {
   var partnerCode = "MOMO";
   var redirectUrl = "https://webhook.site/b3088a6a-2d17-4f8d-a383-71389a6c600b";
   var ipnUrl =
-    "https://d192-14-241-237-114.ngrok-free.app/api/v1/payment/callback";
+    `${process.env.HOSTNAME}/api/v1/payment/callback`;
   var requestType = "payWithMethod";
   var amount = paid_amount * 1000;
   var orderId = partnerCode + new Date().getTime();
