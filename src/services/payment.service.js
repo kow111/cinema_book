@@ -68,8 +68,7 @@ const paymentWithMomoService = async (payment) => {
   //parameters
   var orderInfo = "pay with MoMo";
   var redirectUrl = "https://webhook.site/b3088a6a-2d17-4f8d-a383-71389a6c600b";
-  // var ipnUrl = `${process.env.HOSTNAME}/api/v1/payment/callback`;
-  var ipnUrl = `https://659f-14-241-237-114.ngrok-free.app/api/v1/payment/callback`;
+  var ipnUrl = `${process.env.HOSTNAME}/api/v1/payment/callback`;
   var requestType = "payWithMethod";
 
   var amount = paid_amount * 1000;
