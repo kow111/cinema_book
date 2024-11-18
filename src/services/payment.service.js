@@ -1,6 +1,10 @@
 const Payment = require("../models/payment.model");
 const { default: axios } = require("axios");
 
+const accessKey = "F8BBA842ECF85";
+const secretKey = "K951B6PE1waDMi640xX08PD3vg6EkVlz";
+const partnerCode = "MOMO";
+
 const createPaymentService = async (payment) => {
   try {
     return await Payment.create(payment);
@@ -62,13 +66,12 @@ const paymentWithMomoService = async (payment) => {
   } = payment;
   //https://developers.momo.vn/#/docs/en/aiov2/?id=payment-method
   //parameters
-  var accessKey = "F8BBA842ECF85";
-  var secretKey = "K951B6PE1waDMi640xX08PD3vg6EkVlz";
   var orderInfo = "pay with MoMo";
-  var partnerCode = "MOMO";
   var redirectUrl = "https://webhook.site/b3088a6a-2d17-4f8d-a383-71389a6c600b";
-  var ipnUrl = `${process.env.HOSTNAME}/api/v1/payment/callback`;
+  // var ipnUrl = `${process.env.HOSTNAME}/api/v1/payment/callback`;
+  var ipnUrl = `https://659f-14-241-237-114.ngrok-free.app/api/v1/payment/callback`;
   var requestType = "payWithMethod";
+
   var amount = paid_amount * 1000;
   var orderId = partnerCode + new Date().getTime();
   var requestId = orderId;
@@ -80,7 +83,6 @@ const paymentWithMomoService = async (payment) => {
     paid_amount,
     user_id,
   });
-  var orderGroupId = "";
   var autoCapture = true;
   var lang = "vi";
 
@@ -108,7 +110,7 @@ const paymentWithMomoService = async (payment) => {
     "&requestType=" +
     requestType;
   //puts raw signature
-  console.log("--------------------RAW SIGNATURE----------------");
+  console.log("--------------------RAW SIGNATURE 1----------------");
   console.log(rawSignature);
   //signature
   const crypto = require("crypto");
@@ -134,7 +136,6 @@ const paymentWithMomoService = async (payment) => {
     requestType: requestType,
     autoCapture: autoCapture,
     extraData: extraData,
-    orderGroupId: orderGroupId,
     signature: signature,
   });
   const options = {
@@ -161,20 +162,19 @@ const paymentWithMomoService = async (payment) => {
 
 const callBackMoMoService = async (data) => {
   try {
-    // // Xác thực chữ ký MoMo để đảm bảo callback hợp lệ
-    // const crypto = require("crypto");
-    // var accessKey = "F8BBA842ECF85";
-    // var secretKey = "K951B6PE1waDMi640xX08PD3vg6EkVlz";
-    // var partnerCode = "MOMO";
-    // const rawSignature = `accessKey=${accessKey}&orderId=${data.orderId}&partnerCode=${partnerCode}&requestId=${data.requestId}&amount=${data.amount}&orderInfo=${data.orderInfo}&orderType=${data.orderType}&transId=${data.transId}&message=${data.message}&localMessage=${data.localMessage}&responseTime=${data.responseTime}&errorCode=${data.errorCode}&payType=${data.payType}&extraData=${data.extraData}`;
-    // const signature = crypto
-    //   .createHmac("sha256", secretKey)
-    //   .update(rawSignature)
-    //   .digest("hex");
+    // Xác thực chữ ký MoMo để đảm bảo callback hợp lệ
+    const crypto = require("crypto");
+    const rawSignature = `accessKey=${accessKey}&amount=${data.amount}&extraData=${data.extraData}&message=${data.message}&orderId=${data.orderId}&orderInfo=${data.orderInfo}&orderType=${data.orderType}&partnerCode=${partnerCode}&payType=${data.payType}&requestId=${data.requestId}&responseTime=${data.responseTime}&resultCode=${data.resultCode}&transId=${data.transId}`;
+    const generatedSignature = crypto
+      .createHmac("sha256", secretKey)
+      .update(rawSignature)
+      .digest("hex");
 
-    // if (signature !== data.signature) {
-    //   throw new Error("Invalid signature from MoMo");
-    // }
+    if (generatedSignature !== data.signature) {
+      throw new Error("Invalid signature from MoMo");
+    }
+
+    console.log("valid Signtature from MoMo");
 
     if (data.resultCode !== 0) {
       console.log("Payment failed", data.message);
