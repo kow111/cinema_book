@@ -44,12 +44,17 @@ const getPaymentsService = async () => {
     throw new Error(error.message);
   }
 };
-
 const getPaymentByShowTimeIdService = async (show_time_id) => {
   try {
     return await Payment.find({ show_time_id })
-      .populate("user_id")
-      .populate("show_time_id");
+      .populate({
+        path: "show_time_id",
+        populate: [
+          { path: "film_id", populate: { path: "category_id" } },
+          { path: "branch_id" },
+        ],
+      })
+      .populate("user_id");
   } catch (error) {
     throw new Error(error.message);
   }
