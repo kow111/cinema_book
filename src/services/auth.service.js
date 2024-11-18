@@ -104,9 +104,23 @@ const resetPasswordService = async (data) => {
   }
 };
 
+const updateUserService = async (userId, updatedData) => {
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $set: updatedData },
+      { new: true }
+    );
+    return updatedUser;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 module.exports = {
   signupService,
   loginService,
+  updateUserService,
   sendOtpService,
   verifyOTPService,
   resetPasswordService,

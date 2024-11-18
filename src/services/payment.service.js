@@ -22,7 +22,20 @@ const updatePaymentService = async (id, payment) => {
 
 const getPaymentsService = async () => {
   try {
-    return await Payment.find().populate("user_id").populate("show_time_id");
+    const payments = await Payment.find()
+      .populate("user_id")
+      .populate({
+        path: "show_time_id",
+        populate: [
+          {
+            path: "film_id",
+            populate: { path: "category_id", model: "Category" }, // Join thêm category_id từ Film
+          },
+          { path: "branch_id", model: "Branch" }, // Join branch_id
+        ],
+      });
+
+    return payments;
   } catch (error) {
     throw new Error(error.message);
   }
@@ -54,8 +67,7 @@ const paymentWithMomoService = async (payment) => {
   var orderInfo = "pay with MoMo";
   var partnerCode = "MOMO";
   var redirectUrl = "https://webhook.site/b3088a6a-2d17-4f8d-a383-71389a6c600b";
-  var ipnUrl =
-    `${process.env.HOSTNAME}/api/v1/payment/callback`;
+  var ipnUrl = `${process.env.HOSTNAME}/api/v1/payment/callback`;
   var requestType = "payWithMethod";
   var amount = paid_amount * 1000;
   var orderId = partnerCode + new Date().getTime();
