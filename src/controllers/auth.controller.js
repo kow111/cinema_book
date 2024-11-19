@@ -16,10 +16,11 @@ const postSignup = async (req, res) => {
     });
   }
   try {
-    const { email, password } = req.body;
+    const { email, password, full_name } = req.body;
     const rs = await signupService({
       email,
       password,
+      full_name,
     });
     res.status(201).json(rs);
   } catch (err) {

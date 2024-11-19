@@ -5,7 +5,7 @@ const { sendMail } = require("../util/email.transporter");
 
 const signupService = async (data) => {
   try {
-    const { email, password } = data;
+    const { email, password, full_name } = data;
     const user = await User.findOne({ email });
     if (user) {
       throw new Error("Email đã tồn tài");
@@ -19,6 +19,7 @@ const signupService = async (data) => {
     let rs = await User.create({
       email,
       password: hashedPassword,
+      full_name,
     });
     return rs;
   } catch (err) {

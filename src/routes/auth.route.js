@@ -4,6 +4,7 @@ const {
   postSendOtp,
   postResetPassword,
   updateUser,
+  postVerifyOtp,
 } = require("../controllers/auth.controller");
 const { signupValidator } = require("../validators/user.validator");
 
@@ -14,5 +15,6 @@ router.put("/signup/:user_id", updateUser);
 router.post("/login", postLogin);
 router.post("/send-otp", postSendOtp);
 router.post("/reset-password", postResetPassword);
+router.post("/verify-otp", postVerifyOtp);
 
 module.exports = router;
