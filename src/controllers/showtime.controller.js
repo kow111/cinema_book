@@ -28,13 +28,23 @@ const getShowtimesByFilmId = async (req, res) => {
 
 const postCreateShowtime = async (req, res) => {
   try {
-    const { film_id, branch_id, screen_id, start_time, duration } = req.body;
+    const {
+      film_id,
+      branch_id,
+      screen_id,
+      start_time,
+      duration,
+      vip_price,
+      normal_price,
+    } = req.body;
     const newShowtime = await createShowtimeService({
       film_id,
       branch_id,
       screen_id,
       start_time,
       duration,
+      vip_price,
+      normal_price,
     });
     res.status(201).json(newShowtime);
   } catch (error) {

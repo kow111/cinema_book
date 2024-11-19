@@ -33,9 +33,9 @@ const getPaymentsService = async () => {
         populate: [
           {
             path: "film_id",
-            populate: { path: "category_id", model: "Category" }, // Join thêm category_id từ Film
+            populate: { path: "category_id", model: "Category" },
           },
-          { path: "branch_id", model: "Branch" }, // Join branch_id
+          { path: "branch_id", model: "Branch" },
         ],
       });
 

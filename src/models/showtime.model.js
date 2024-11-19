@@ -27,6 +27,14 @@ const showtimeSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  vip_price: {
+    type: Number,
+    required: true,
+  },
+  normal_price: {
+    type: Number,
+    required: true,
+  },
   is_active: {
     type: Boolean,
     default: true,
