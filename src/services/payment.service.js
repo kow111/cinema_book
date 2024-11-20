@@ -72,7 +72,7 @@ const paymentWithMomoService = async (payment) => {
   //https://developers.momo.vn/#/docs/en/aiov2/?id=payment-method
   //parameters
   var orderInfo = "pay with MoMo";
-  var redirectUrl = "https://webhook.site/b3088a6a-2d17-4f8d-a383-71389a6c600b";
+  var redirectUrl = "https://booking-film.onrender.com/transaction-status";
   var ipnUrl = `${process.env.HOSTNAME}/api/v1/payment/callback`;
   var requestType = "payWithMethod";
 
@@ -160,6 +160,7 @@ const paymentWithMomoService = async (payment) => {
       data: rs.data,
     };
   } catch (error) {
+    console.log("error", error);
     throw new Error(error.message);
   }
 };
