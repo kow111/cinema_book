@@ -76,7 +76,7 @@ const paymentWithMomoService = async (payment) => {
   var ipnUrl = `${process.env.HOSTNAME}/api/v1/payment/callback`;
   var requestType = "payWithMethod";
 
-  var amount = paid_amount * 1000;
+  var amount = paid_amount;
   var orderId = partnerCode + new Date().getTime();
   var requestId = orderId;
   var extraData = JSON.stringify({
